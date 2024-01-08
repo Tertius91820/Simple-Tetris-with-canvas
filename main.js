@@ -20,6 +20,8 @@ const moves = {
   [KEY.LEFT]: (p) => ({ ...p, x: p.x - 1 }),
   [KEY.RIGHT]: (p) => ({ ...p, x: p.x + 1 }),
   [KEY.DOWN]: (p) => ({ ...p, y: p.y + 1 }),
+  [KEY.SPACE]: (p) => ({ ...p, y: p.y + 1 }),
+  [KEY.UP]: (p) => board.rotate(p),
 };
 
 document.addEventListener("keydown", (event) => {
@@ -28,11 +30,17 @@ document.addEventListener("keydown", (event) => {
 
     let p = moves[event.keyCode](board.piece);
 
-    if (board.valid(p)) {
+    if (event.keyCode === KEY.SPACE) {
+      //Hard Drop
+      while (board.valid(p)) {
+        board.piece.move(p);
+        p = moves[KEY.DOWN](board.piece);
+      }
+    } else if (board.valid(p)) {
       board.piece.move(p);
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-
-      board.piece.draw();
     }
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    board.piece.draw();
   }
 });
